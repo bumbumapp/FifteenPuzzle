@@ -2,7 +2,7 @@
 
 ## Thanks
 
-	MIT License
+	[MIT License](https://github.com/italankin/15Puzzle/blob/master/LICENSE)
 
 	Copyright (c) 2017 Igor Talankin
 
