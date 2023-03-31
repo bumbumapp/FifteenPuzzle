@@ -1,22 +1,6 @@
-# 15 Puzzle [![tests](https://github.com/italankin/15Puzzle/actions/workflows/tests.yml/badge.svg)](https://github.com/italankin/15Puzzle/actions/workflows/tests.yml) [![Latest release](https://img.shields.io/github/v/release/italankin/15puzzle)](https://github.com/italankin/15puzzle/releases/latest) 
 
-Simple Android sliding puzzle game.
 
-![15 Puzzle](/art/15puzzle.jpg)
-
-# Features
-* 3 game types: classic, snake, spiral
-* 2 game modes: normal, hard 
-* custom puzzle size: anything between 3x3 and 10x10
-* hover control support
-* fringe color scheme support
-* session statistics: Ao5, Ao12, etc.
-
-# Download
-On [Google Play](https://play.google.com/store/apps/details?id=com.italankin.fifteen) or APK at
-[releases](https://github.com/italankin/15Puzzle/releases).
-
-# License
+## Thanks
 
 	MIT License
 
