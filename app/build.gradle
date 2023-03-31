@@ -3,47 +3,25 @@ plugins {
 }
 
 android {
-    compileSdkVersion 30
+    compileSdkVersion 31
 
     defaultConfig {
-        applicationId 'com.italankin.fifteen'
-        versionCode 40
-        versionName "1.14.4"
-        minSdkVersion 19
-        targetSdkVersion 30
+        applicationId 'com.bumbumapps.fifteenpuzzlepro'
+        versionCode 1
+        versionName "1.0.0"
+        minSdkVersion 21
+        targetSdkVersion 31
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
-    signingConfigs {
-        debug {
-            storeFile file('keystore-debug/debug.keystore')
-            storePassword 'android'
-            keyAlias 'debug'
-            keyPassword 'android'
-        }
-        release {
-            Properties propsRelease = new Properties()
-            File propsFileRelease = file('keystore-release/release.properties')
-            if (propsFileRelease.exists()) {
-                propsRelease.load(new FileInputStream(propsFileRelease))
 
-                storeFile file('keystore-release/' + propsRelease['keystore'])
-                storePassword propsRelease['keystore_password']
-                keyAlias propsRelease['alias']
-                keyPassword propsRelease['alias_password']
-            }
-        }
-    }
 
     buildTypes {
-        debug {
-            signingConfig signingConfigs.debug
-            applicationIdSuffix ".debug"
-        }
         release {
+            minifyEnabled false
             debuggable false
-            signingConfig signingConfigs.release
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
 
