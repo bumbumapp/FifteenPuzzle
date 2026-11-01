@@ -1,5 +1,6 @@
 package com.bumbumapps.fifteenpuzzlepro;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
@@ -10,6 +11,7 @@ import android.net.Uri;
 import android.view.MotionEvent;
 import android.view.View;
 
+import com.bumbumapps.fifteenpuzzlepro.ads.AdsManager;
 import com.bumbumapps.fifteenpuzzlepro.export.ExportCallback;
 import com.bumbumapps.fifteenpuzzlepro.game.Game;
 import com.bumbumapps.fifteenpuzzlepro.statistics.StatisticsManager;
@@ -251,7 +253,7 @@ public class GameSurface extends View implements TopPanelView.Callback {
                     mStatistics.onClick(mGestureStartX, mGestureStartY);
                     return true;
                 } else if (state.isSolved() && mRectField.contains(x, y)) {
-                    createNewGame(true);
+                    newGameAfterSolve();
                     return true;
                 } else if (mTopPanel.onClick(x, y)) {
                     return true;
@@ -417,6 +419,23 @@ public class GameSurface extends View implements TopPanelView.Callback {
         mSolvedOverlay.update();
         mStatistics.update();
         mHardModeView.update();
+    }
+
+    /** Tap on a solved field: a natural break, so an interstitial may show first (hms build, capped). */
+    private void newGameAfterSolve() {
+        if (Settings.newGameDelay && ((System.currentTimeMillis() - lastSolvedTimestamp) < Constants.NEW_GAME_DELAY)) {
+            return;
+        }
+        Context context = getContext();
+        if (!(context instanceof Activity)) {
+            createNewGame(true);
+            return;
+        }
+        AdsManager.get(context).onBreakPoint((Activity) context, () -> {
+            if (GameState.get().isSolved()) {
+                createNewGame(true);
+            }
+        });
     }
 
     private void createNewGame(boolean isUser) {

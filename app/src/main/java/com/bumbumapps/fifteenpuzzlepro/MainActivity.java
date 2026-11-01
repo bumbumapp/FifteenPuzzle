@@ -5,9 +5,13 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
+import android.view.ViewGroup;
 import android.view.Window;
+import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.bumbumapps.fifteenpuzzlepro.ads.AdsManager;
 import com.bumbumapps.fifteenpuzzlepro.export.ExportCallback;
 import com.bumbumapps.fifteenpuzzlepro.export.Exporter;
 import com.bumbumapps.fifteenpuzzlepro.export.RecordsExporter;
@@ -23,6 +27,7 @@ public class MainActivity extends Activity implements ExportCallback {
     private Exporter mSessionExporter;
     private DBHelper mDbHelper;
     private GameSurface mGameView;
+    private LinearLayout mRoot;
 
     private final Exporter.Callback exportCallback = new Exporter.Callback() {
         @Override
@@ -56,6 +61,7 @@ public class MainActivity extends Activity implements ExportCallback {
         mDbHelper = new DBHelper(this);
         mRecordsExporter = new RecordsExporter(this, mDbHelper);
         mSessionExporter = new SessionExporter(this);
+        AdsManager.get(this).init(this);
     }
 
     @Override
@@ -66,8 +72,29 @@ public class MainActivity extends Activity implements ExportCallback {
         if (mGameView == null) {
             mGameView = new GameSurface(this, this, mDbHelper);
             mGameView.setId(R.id.game_view);
+            mRoot = buildRoot(mGameView);
         }
-        setContentView(mGameView);
+        mRoot.setBackgroundColor(Colors.getBackgroundColor());
+        setContentView(mRoot);
+    }
+
+    /**
+     * Game surface on top, banner slot below (Huawei AppGallery build only). The surface lays out its
+     * field once, so the banner's height is reserved up front instead of resizing the game later.
+     */
+    private LinearLayout buildRoot(GameSurface game) {
+        LinearLayout root = new LinearLayout(this);
+        root.setOrientation(LinearLayout.VERTICAL);
+        root.addView(game, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0, 1f));
+        AdsManager ads = AdsManager.get(this);
+        int bannerHeight = ads.bannerHeightPx(this);
+        if (bannerHeight > 0) {
+            FrameLayout adContainer = new FrameLayout(this);
+            root.addView(adContainer, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, bannerHeight));
+            ads.loadBanner(this, adContainer);
+            adContainer.setVisibility(android.view.View.INVISIBLE);
+        }
+        return root;
     }
 
     @Override
@@ -83,6 +110,7 @@ public class MainActivity extends Activity implements ExportCallback {
         Settings.updateUiMode(this);
         if (mGameView != null) {
             mGameView.updateViews();
+            mRoot.setBackgroundColor(Colors.getBackgroundColor());
         }
     }
 
